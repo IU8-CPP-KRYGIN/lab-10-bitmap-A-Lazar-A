@@ -32,11 +32,11 @@ find_package(GTest CONFIG REQUIRED)
 add_library(${PROJECT_NAME} STATIC
   # enum your files and delete this comment
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/bitmap.cpp
-)
+        )
 
 add_executable(demo
   ${CMAKE_CURRENT_SOURCE_DIR}/demo/main.cpp
-)
+        )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -44,7 +44,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(demo ${PROJECT_NAME})
+set(CMAKE_CXX_FLAGS "-lboost_program_options")
+set(BOOST_ROOT "/home/nikita/boost_1_76_0/")
+set(Boost_INCLUDE_DIRS "/home/nikita/boost_1_76_0/libs")
+find_package(Boost 1.76.0 COMPONENTS program_options REQUIRED)
 
+if(NOT Boost_FOUND)
+  message(FATAL_ERROR "Could not find boost!")
+endif()
+include_directories(${Boost_INCLUDE_DIRS})
+target_link_libraries(demo ${Boost_LIBRARIES})
 if(BUILD_TESTS)
   add_executable(tests
     # TODO: enum your files and delete this comment

@@ -25,6 +25,7 @@ jobs:
       - name: prepare environment
         run:  sudo apt install git &&
               git submodule update --init
+              apt-get install libboost-all-dev
 
       - name: checks
         run:

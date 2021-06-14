@@ -127,9 +127,7 @@ int main(int argc, char *argv[]) {
         std::bitset<CHAR_BIT> l(s);
         ssbit += l.to_string();
       }
-
       std::bitset<32> size_of_crypt_bit(ssbit.length());
-
       tagBITMAPFILEHEADER *file_header = new tagBITMAPFILEHEADER();
       fread(&file_header->bfType, sizeof(unsigned char), 2, image);
       fread(&file_header->bfSize, sizeof(unsigned char), 4, image);
@@ -142,7 +140,6 @@ int main(int argc, char *argv[]) {
         return 0;
       }
       //Считываю infoheader
-
       tagBITMAPINFOHEADER *file_infoheader = new tagBITMAPINFOHEADER();
       tagBITMAPINFOHEADER2 *file_infoheaderV2 = new tagBITMAPINFOHEADER2();
       BITMAPINFOHEADER3 *file_infoheaderV3 = new BITMAPINFOHEADER3();
@@ -168,10 +165,10 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheaderV2->biRedMask, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV2->biGreenMask, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV2->biBlueMask, sizeof(unsigned char), 4, image);
-      } else{delete file_infoheaderV2; delete file_infoheaderV3; delete file_infoheaderV4; delete file_infoheaderV5;}
+      }
       if (file_infoheader->biSize >= 56) {
         fread(&file_infoheaderV3->biAlphaMask, sizeof(unsigned char), 4, image);
-      }else{ delete file_infoheaderV3; delete file_infoheaderV4; delete file_infoheaderV5;}
+      }
       if (file_infoheader->biSize >= 108) {
         fread(&file_infoheaderV4->biCSType, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV4->biEndpoints, sizeof(CIEXYZTRIPLE), 1, image);
@@ -179,7 +176,7 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheaderV4->biGammaGreen, sizeof(unsigned char), 4,
               image);
         fread(&file_infoheaderV4->biGammaBlue, sizeof(unsigned char), 4, image);
-      }else{ delete file_infoheaderV4; delete file_infoheaderV5;}
+      }
       if (file_infoheader->biSize >= 124) {
         fread(&file_infoheaderV5->biIntent, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV5->biProfileData, sizeof(unsigned char), 4,
@@ -187,10 +184,18 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheaderV5->biProfileSize, sizeof(unsigned char), 4,
               image);
         fread(&file_infoheaderV5->biReserved, sizeof(unsigned char), 4, image);
-      }else{ delete file_infoheaderV5;}
+      }
 
+      if (file_infoheader->biSize < 52){
+        delete file_infoheaderV2; delete file_infoheaderV3; delete file_infoheaderV4; delete file_infoheaderV5;
+      } else if (file_infoheader->biSize < 56){
+        delete file_infoheaderV3; delete file_infoheaderV4; delete file_infoheaderV5;
+      } else if (file_infoheader->biSize < 104){
+         delete file_infoheaderV4; delete file_infoheaderV5;
+      }else if (file_infoheader->biSize < 124){
+         delete file_infoheaderV5;
+      }
       //Считываю пиксели
-
       int size =
           ceil(float(file_header->bfSize - 14 - file_infoheader->biSize) / 4);
       tagRGBQUAD *data = new tagRGBQUAD[size];
@@ -243,7 +248,6 @@ int main(int argc, char *argv[]) {
       BITMAPINFOHEADER3 *file_infoheader2V3 = new BITMAPINFOHEADER3();
       BITMAPINFOHEADER4 *file_infoheader2V4 = new BITMAPINFOHEADER4();
       BITMAPINFOHEADER5 *file_infoheader2V5 = new BITMAPINFOHEADER5();
-
       // reading
       fread(&file_header2->bfType, sizeof(unsigned char), 2, imagetodecrypt);
       fread(&file_header2->bfSize, sizeof(unsigned char), 4, imagetodecrypt);
@@ -252,7 +256,6 @@ int main(int argc, char *argv[]) {
       fread(&file_header2->bfReserved2, sizeof(unsigned char), 2,
             imagetodecrypt);
       fread(&file_header2->bfOffBits, sizeof(unsigned char), 4, imagetodecrypt);
-
       tagBITMAPINFOHEADER *file_infoheader2 = new tagBITMAPINFOHEADER();
       fread(&file_infoheader2->biSize, sizeof(unsigned char), 4,
             imagetodecrypt);
@@ -286,7 +289,6 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheader2V2->biBlueMask, sizeof(unsigned char), 4,
               imagetodecrypt);
       }
-
       if (file_infoheader2->biSize >= 56) {
         fread(&file_infoheader2V3->biAlphaMask, sizeof(unsigned char), 4,
               imagetodecrypt);
@@ -313,14 +315,11 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheader2V5->biReserved, sizeof(unsigned char), 4,
               imagetodecrypt);
       }
-
       int size2 =
           ceil(float(file_header2->bfSize - 14 - file_infoheader2->biSize) / 4);
       tagRGBQUAD *data2 = new tagRGBQUAD[size2];
       for (int i = 0; i < size2; ++i) {
         fread(&data2[i], sizeof(tagRGBQUAD), 1, imagetodecrypt);
-        // cout << hex << +data[i].rgbBlue << " " << +data[i].rgbGreen << " " <<
-        // +data[i].rgbRed << endl;
       }
       // decrypting
       std::string size_decrypt_bit;
@@ -329,7 +328,6 @@ int main(int argc, char *argv[]) {
       }
       std::reverse(size_decrypt_bit.begin(), size_decrypt_bit.end());
       auto kaka = std::bitset<32>(size_decrypt_bit.c_str()).to_ullong();
-
       std::string decrypt_text_bit;
       for (int i = 32; i < 32 + kaka; ++i) {
         decrypt_text_bit += std::to_string(data2[i].rgbRed & 1);
@@ -362,7 +360,6 @@ int main(int argc, char *argv[]) {
       }
       tagBITMAPINFOHEADER *file_infoheader = new tagBITMAPINFOHEADER();
       fread(&file_infoheader->biSize, sizeof(unsigned char), 4, image);
-
       fread(&file_infoheader->biWidth, sizeof(unsigned char), 4, image);
       fread(&file_infoheader->biHeight, sizeof(unsigned char), 4, image);
       fread(&file_infoheader->biPlanes, sizeof(unsigned char), 2, image);

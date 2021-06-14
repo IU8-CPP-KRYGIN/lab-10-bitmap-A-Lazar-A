@@ -196,25 +196,25 @@ int main(int argc, char *argv[]) {
          delete file_infoheaderV5;
       }
       //Считываю пиксели
-      int size =
+      size_t size =
           ceil(float(file_header->bfSize - 14 - file_infoheader->biSize) / 4);
       tagRGBQUAD *data = new tagRGBQUAD[size];
-      if (size < static_cast<int>(ssbit.length())) {
+      if (size < ssbit.length()) {
         std::cout << "The input image is too small to hide the message"
                   << std::endl;
         return 0;
       }
-      for (int i = 0; i < size; ++i) {
+      for (size_t i = 0; i < size; ++i) {
         fread(&data[i], sizeof(tagRGBQUAD), 1, image);
       }
       fclose(image);
-      for (int i = 0; i < static_cast<int>(size_of_crypt_bit.size()); ++i) {
+      for (size_t i = 0; i < size_of_crypt_bit.size(); ++i) {
         data[i].rgbRed = data[i].rgbRed >> 1;
         data[i].rgbRed = data[i].rgbRed << 1;
         data[i].rgbRed = data[i].rgbRed | size_of_crypt_bit[i];
       }
-      for (int i = size_of_crypt_bit.size();
-           i < static_cast<int>(ssbit.length() + size_of_crypt_bit.size()); ++i) {
+      for (size_t i = size_of_crypt_bit.size();
+           i < ssbit.length() + size_of_crypt_bit.size(); ++i) {
         data[i].rgbRed = data[i].rgbRed >> 1;
         data[i].rgbRed = data[i].rgbRed << 1;
         data[i].rgbRed = data[i].rgbRed | ssbit[i - size_of_crypt_bit.size()];
@@ -339,11 +339,11 @@ int main(int argc, char *argv[]) {
       std::reverse(size_decrypt_bit.begin(), size_decrypt_bit.end());
       auto kaka = std::bitset<32>(size_decrypt_bit.c_str()).to_ullong();
       std::string decrypt_text_bit;
-      for (int i = 32; i < static_cast<int>(32 + kaka); ++i) {
+      for (size_t i = 32; i < 32 + kaka; ++i) {
         decrypt_text_bit += std::to_string(data2[i].rgbRed & 1);
       }
       std::string final;
-      for (int i = 0; i < static_cast<int>(decrypt_text_bit.length());) {
+      for (size_t i = 0; i < decrypt_text_bit.length();) {
         std::string buf;
         for (int j = 0; j < 8; ++j, ++i) {
           buf += decrypt_text_bit[i];

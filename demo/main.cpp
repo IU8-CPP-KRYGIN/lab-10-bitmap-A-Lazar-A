@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
       int size =
           ceil(float(file_header->bfSize - 14 - file_infoheader->biSize) / 4);
       tagRGBQUAD *data = new tagRGBQUAD[size];
-      if (size < ssbit.length()) {
+      if (size < static_cast<int>(ssbit.length())) {
         std::cout << "The input image is too small to hide the message"
                   << std::endl;
         return 0;
@@ -208,13 +208,13 @@ int main(int argc, char *argv[]) {
         fread(&data[i], sizeof(tagRGBQUAD), 1, image);
       }
       fclose(image);
-      for (int i = 0; i < size_of_crypt_bit.size(); ++i) {
+      for (int i = 0; i < static_cast<int>(size_of_crypt_bit.size()); ++i) {
         data[i].rgbRed = data[i].rgbRed >> 1;
         data[i].rgbRed = data[i].rgbRed << 1;
         data[i].rgbRed = data[i].rgbRed | size_of_crypt_bit[i];
       }
       for (int i = size_of_crypt_bit.size();
-           i < ssbit.length() + size_of_crypt_bit.size(); ++i) {
+           i < static_cast<int>(ssbit.length() + size_of_crypt_bit.size()); ++i) {
         data[i].rgbRed = data[i].rgbRed >> 1;
         data[i].rgbRed = data[i].rgbRed << 1;
         data[i].rgbRed = data[i].rgbRed | ssbit[i - size_of_crypt_bit.size()];
@@ -315,6 +315,16 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheader2V5->biReserved, sizeof(unsigned char), 4,
               imagetodecrypt);
       }
+
+      if (file_infoheader2->biSize < 52){
+        delete file_infoheader2V2; delete file_infoheader2V3; delete file_infoheader2V4; delete file_infoheader2V5;
+      } else if (file_infoheader2->biSize < 56){
+        delete file_infoheader2V3; delete file_infoheader2V4; delete file_infoheader2V5;
+      } else if (file_infoheader2->biSize < 104){
+        delete file_infoheader2V4; delete file_infoheader2V5;
+      }else if (file_infoheader2->biSize < 124){
+        delete file_infoheader2V5;
+      }
       int size2 =
           ceil(float(file_header2->bfSize - 14 - file_infoheader2->biSize) / 4);
       tagRGBQUAD *data2 = new tagRGBQUAD[size2];
@@ -329,11 +339,11 @@ int main(int argc, char *argv[]) {
       std::reverse(size_decrypt_bit.begin(), size_decrypt_bit.end());
       auto kaka = std::bitset<32>(size_decrypt_bit.c_str()).to_ullong();
       std::string decrypt_text_bit;
-      for (int i = 32; i < 32 + kaka; ++i) {
+      for (int i = 32; i < static_cast<int>(32 + kaka); ++i) {
         decrypt_text_bit += std::to_string(data2[i].rgbRed & 1);
       }
       std::string final;
-      for (int i = 0; i < decrypt_text_bit.length();) {
+      for (int i = 0; i < static_cast<int>(decrypt_text_bit.length());) {
         std::string buf;
         for (int j = 0; j < 8; ++j, ++i) {
           buf += decrypt_text_bit[i];

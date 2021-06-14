@@ -44,10 +44,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(demo ${PROJECT_NAME})
-set(CMAKE_CXX_FLAGS "-lboost_program_options")
-set(BOOST_ROOT "/home/nikita/boost_1_76_0/")
-set(Boost_INCLUDE_DIRS "/home/nikita/boost_1_76_0/libs")
-find_package(Boost 1.76.0 COMPONENTS program_options REQUIRED)
+#set(CMAKE_CXX_FLAGS "-lboost_program_options")
+#set(BOOST_ROOT "/home/nikita/boost_1_76_0/")
+#set(Boost_INCLUDE_DIRS "/home/nikita/boost_1_76_0/libs")
+find_package(Boost 1.74.0 COMPONENTS program_options REQUIRED)
 
 if(NOT Boost_FOUND)
   message(FATAL_ERROR "Could not find boost!")

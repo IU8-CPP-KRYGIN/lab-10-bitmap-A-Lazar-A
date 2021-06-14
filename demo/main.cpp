@@ -168,10 +168,10 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheaderV2->biRedMask, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV2->biGreenMask, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV2->biBlueMask, sizeof(unsigned char), 4, image);
-      }
+      } else{delete file_infoheaderV2; delete file_infoheaderV3; delete file_infoheaderV4; delete file_infoheaderV5;}
       if (file_infoheader->biSize >= 56) {
         fread(&file_infoheaderV3->biAlphaMask, sizeof(unsigned char), 4, image);
-      }
+      }else{ delete file_infoheaderV3; delete file_infoheaderV4; delete file_infoheaderV5;}
       if (file_infoheader->biSize >= 108) {
         fread(&file_infoheaderV4->biCSType, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV4->biEndpoints, sizeof(CIEXYZTRIPLE), 1, image);
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheaderV4->biGammaGreen, sizeof(unsigned char), 4,
               image);
         fread(&file_infoheaderV4->biGammaBlue, sizeof(unsigned char), 4, image);
-      }
+      }else{ delete file_infoheaderV4; delete file_infoheaderV5;}
       if (file_infoheader->biSize >= 124) {
         fread(&file_infoheaderV5->biIntent, sizeof(unsigned char), 4, image);
         fread(&file_infoheaderV5->biProfileData, sizeof(unsigned char), 4,
@@ -187,7 +187,7 @@ int main(int argc, char *argv[]) {
         fread(&file_infoheaderV5->biProfileSize, sizeof(unsigned char), 4,
               image);
         fread(&file_infoheaderV5->biReserved, sizeof(unsigned char), 4, image);
-      }
+      }else{ delete file_infoheaderV5;}
 
       //Считываю пиксели
 

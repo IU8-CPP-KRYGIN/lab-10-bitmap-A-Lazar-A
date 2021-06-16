@@ -24,7 +24,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: prepare environment
         run:  sudo apt install git &&
-              git submodule update --init
+              git submodule update --init &&
+              sudo apt install libboost-all-dev
+        continue-on-error: true
 
       - name: checks
         run:

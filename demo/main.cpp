@@ -105,7 +105,15 @@ int main(int argc, char *argv[]) {
       std::string outputPATH = vm["output"].as<std::string>();
       std::string messagePATH = vm["message"].as<std::string>();
       FILE *image = fopen(inputPATH.c_str(), "rb");
+      if (!image){
+        std::cout<<"NO SUCH PICTURE";
+        return 0;
+      }
       FILE *text = fopen(messagePATH.c_str(), "rb");
+      if (!text){
+        std::cout<<"NO SUCH TEXT";
+        return 0;
+      }
       // seek to end of file
       fseek(text, 0, SEEK_END);
       // get current file position which is end from seek
@@ -246,6 +254,10 @@ int main(int argc, char *argv[]) {
       std::string inputPATH = vm["input"].as<std::string>();
       std::string messagePATH = vm["message"].as<std::string>();
       FILE *imagetodecrypt = fopen(inputPATH.c_str(), "rb");
+      if (!imagetodecrypt){
+        std::cout<<"NO SUCH PICTURE";
+        return 0;
+      }
       auto *file_header2 = new tagBITMAPFILEHEADER();
       auto *file_infoheader2V2 = new tagBITMAPINFOHEADER2();
       auto *file_infoheader2V3 = new BITMAPINFOHEADER3();
@@ -366,6 +378,10 @@ int main(int argc, char *argv[]) {
     if (vm.count("info")) {
       std::string inputPATH = vm["input"].as<std::string>();
       FILE *image = fopen(inputPATH.c_str(), "rb");
+      if (!image){
+        std::cout<<"NO SUCH PICTURE";
+        return 0;
+      }
       tagBITMAPFILEHEADER *file_header = new tagBITMAPFILEHEADER();
       fread(&file_header->bfType, sizeof(unsigned char), 2, image);
       fread(&file_header->bfSize, sizeof(unsigned char), 4, image);
